@@ -1,7 +1,6 @@
 - url: https://pollencount.eu/yerevan-am
   wait_for_selector: "svg.highcharts-root"
-  wait: 4000
-  selector: ".highcharts-container"
+  wait: 8000
   retina: true
   viewport: "1200x2500"
   output: pollen-{{date}}T{{time}}.png
