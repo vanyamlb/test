@@ -3,5 +3,5 @@
   wait: 8000
   retina: true
   viewport: "1200x2500"
-  output: pollen-{{ date }}-{{ time }}.png
+ output: pollen.png
   
