@@ -1,0 +1,42 @@
+name: Take screenshots
+
+on:
+  schedule:
+    - cron: "0 9 * * *"
+  workflow_dispatch:
+
+jobs:
+  screenshot:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: 3.11
+
+      - name: Install shot-scraper and Playwright
+        run: |
+          pip install shot-scraper
+          pip install playwright
+          playwright install chromium
+
+      - name: Run screenshots
+        run: |
+          shot-scraper multi shots.yml
+
+      - name: Commit screenshots
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add *.png
+          timestamp=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+          git commit -m "Daily pollen screenshot: $timestamp" || echo "No changes"
+          git push
+
+      - name: Send to Telegram
+        run: |
+          latest_file=$(ls -t *.png | head -n 1)
+          curl -F chat_id=327580527 -F photo=@${latest_file} https://api.telegram.org/bot8309206142:AAHWtIzKV-gwm6U4ONgsxUiosf8Exk8VOUQ/sendPhoto
